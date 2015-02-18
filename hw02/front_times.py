@@ -1,4 +1,2 @@
-def front_times(str, n):
-  tmpList = [str[:3] for x in range(n)]
-  return ''.join(tmpList)
-
+def frontTimes(str, n):
+  return ''.join([str[:3] for i in range(n)])

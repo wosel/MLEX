@@ -1,6 +1,7 @@
 import string_bits
 import unittest
 import front_times
+import string_splosion
 import string_times
 
 __author__ = 'Jakub'
@@ -18,12 +19,13 @@ class TestHW2(unittest.TestCase):
             {'orig': '', 'repeat': 4, 'expResult': ''},
             {'orig': 'Abc', 'repeat': 0, 'expResult': ''},
         ]
-        print '\n'
+
         for x in testList:
             actResult = front_times.frontTimes(x['orig'], x['repeat'])
             print '\nExpected: frontTimes(\'{orig}\', {repeat}) -> \'{expResult}\''.format(orig=x['orig'], repeat=x['repeat'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)
+        print '\n'  
 
     def testStringTimes(self):
         testList = [
@@ -35,12 +37,13 @@ class TestHW2(unittest.TestCase):
             {'orig': '', 'repeat': 4, 'expResult': ''},
 
         ]
-        print '\n'
+
         for x in testList:
             actResult = string_times.stringTimes(x['orig'], x['repeat'])
             print '\nExpected: stringTimes(\'{orig}\', {repeat}) -> \'{expResult}\''.format(orig=x['orig'], repeat=x['repeat'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)
+        print '\n'
     def testStringBits(self):
         testList = [
             {'orig': 'Hello', 'expResult': 'Hlo'},
@@ -54,7 +57,20 @@ class TestHW2(unittest.TestCase):
             print '\nExpected: stringBits(\'{orig}\') -> \'{expResult}\''.format(orig=x['orig'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)
-
+        print '\n'
+    def testStringSplosion(self):
+        testList = [
+            {'orig': 'Code', 'expResult': 'CCoCodCode'},
+            {'orig': 'x', 'expResult': 'x'},
+            {'orig': '', 'expResult': ''},
+            {'orig': 'fade', 'expResult': 'ffafadfade'},
+        ]
+        for x in testList:
+            actResult = string_splosion.stringSplosion(x['orig'])
+            print '\nExpected: stringBits(\'{orig}\') -> \'{expResult}\''.format(orig=x['orig'], expResult=x['expResult'])
+            print 'Result: \'{actResult}\''.format(actResult=actResult)
+            self.assertEqual(x['expResult'], actResult)
+        print '\n'
 
 
 

@@ -1,12 +1,13 @@
+import last2
 import string_bits
 import unittest
 import front_times
 import string_splosion
 import string_times
 
+import codingBatWarmup2 as cb
+
 __author__ = 'Jakub'
-
-
 
 class TestHW2(unittest.TestCase):
     def testFrontTimes(self):
@@ -21,11 +22,11 @@ class TestHW2(unittest.TestCase):
         ]
 
         for x in testList:
-            actResult = front_times.frontTimes(x['orig'], x['repeat'])
+            actResult = cb.frontTimes(x['orig'], x['repeat'])
             print '\nExpected: frontTimes(\'{orig}\', {repeat}) -> \'{expResult}\''.format(orig=x['orig'], repeat=x['repeat'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)
-        print '\n'  
+        print '\n'
 
     def testStringTimes(self):
         testList = [
@@ -35,11 +36,9 @@ class TestHW2(unittest.TestCase):
             {'orig': 'Abc', 'repeat': 0, 'expResult': ''},
             {'orig': 'Oh, boy!', 'repeat': 2, 'expResult': 'Oh, boy!Oh, boy!'},
             {'orig': '', 'repeat': 4, 'expResult': ''},
-
         ]
-
         for x in testList:
-            actResult = string_times.stringTimes(x['orig'], x['repeat'])
+            actResult = cb.stringTimes(x['orig'], x['repeat'])
             print '\nExpected: stringTimes(\'{orig}\', {repeat}) -> \'{expResult}\''.format(orig=x['orig'], repeat=x['repeat'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)
@@ -53,7 +52,7 @@ class TestHW2(unittest.TestCase):
             {'orig': 'Hello Kitten', 'expResult': 'HloKte'}
         ]
         for x in testList:
-            actResult = string_bits.stringBits(x['orig'])
+            actResult = cb.stringBits(x['orig'])
             print '\nExpected: stringBits(\'{orig}\') -> \'{expResult}\''.format(orig=x['orig'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)
@@ -66,7 +65,18 @@ class TestHW2(unittest.TestCase):
             {'orig': 'fade', 'expResult': 'ffafadfade'},
         ]
         for x in testList:
-            actResult = string_splosion.stringSplosion(x['orig'])
+            actResult = cb.stringSplosion(x['orig'])
+            print '\nExpected: stringBits(\'{orig}\') -> \'{expResult}\''.format(orig=x['orig'], expResult=x['expResult'])
+            print 'Result: \'{actResult}\''.format(actResult=actResult)
+            self.assertEqual(x['expResult'], actResult)
+        print '\n'
+    def testLast2(self):
+        testList = [
+            {'orig': 'hixxhi', 'expResult': 1},
+            {'orig': 'hixhixhi', 'expResult': 2},
+        ]
+        for x in testList:
+            actResult = cb.last2(x['orig'])
             print '\nExpected: stringBits(\'{orig}\') -> \'{expResult}\''.format(orig=x['orig'], expResult=x['expResult'])
             print 'Result: \'{actResult}\''.format(actResult=actResult)
             self.assertEqual(x['expResult'], actResult)

@@ -1,2 +1,2 @@
 all:
-	python -m unittest -v testHW2
+	python -m unittest -v testHW1

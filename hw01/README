@@ -9,11 +9,11 @@ codingBatExercises.py:
 
 
 testHW1.py
-- contatins test for all the functions in codingBatExercises.py
+- contatins tests for all the functions in codingBatExercises.py
 
 ==== Running ====
 
-- to run test using python, use python -m unittest --v
+- to run test using python, use python -m unittest --v  testHW1
 - or use make, which does this exact thing for you :-)
 
  

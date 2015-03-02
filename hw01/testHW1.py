@@ -1,10 +1,13 @@
 import unittest
-
 import codingBatExercises as cb
 
 __author__ = 'Jakub'
 
-class TestHW2(unittest.TestCase):
+class TestHW1(unittest.TestCase):
+    name = 'Homework 1 tests'
+    description = 'Test for CodingBat exercises in codingBatExercises.py'
+
+
     def testFrontTimes(self):
         testList = [
             {'orig': 'Chocolate', 'repeat': 3, 'expResult': 'ChoChoCho'},

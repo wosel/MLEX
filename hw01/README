@@ -1,0 +1,19 @@
+
+==== Contents ====
+
+codingBatExercises.py:
+
+- 10 homeworks in one file 
+- name of each function corresponds w/ coding bat names converted to camelCase
+- there is an attempt at documentation in each function
+
+
+testHW1.py
+- contatins test for all the functions in codingBatExercises.py
+
+==== Running ====
+
+- to run test using python, use python -m unittest --v
+- or use make, which does this exact thing for you :-)
+
+ 

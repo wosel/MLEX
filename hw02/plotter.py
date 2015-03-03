@@ -11,7 +11,7 @@ def gaussCurve(x, mu, sigma, alpha):
     return alpha * np.exp((-0.5) * (x - mu) * (x - mu) / (sigma * sigma))
 
 
-def plotFeatureValuesAsHistogram(dataSet, featureColID, classColID, classList=[], classNames = {}, removeNans=True):
+def plotFeatureValuesAsHistogram(dataSet, featureColID, classColID, classList=[], classNames = {}, removeNans=True, sigmaWidth=6):
     """
         Function designed to overview distribution of feature values within given classes
         From a dataset, specify one column as the feature and one as the class. This function will plot a histogram
@@ -23,47 +23,52 @@ def plotFeatureValuesAsHistogram(dataSet, featureColID, classColID, classList=[]
         :param classList: list of classes to display the feature value histogram for (use values fouond in the dataset)
         :param classNames: labels for the legend in the plot. Dictionary indexed by classList
         :param removeNans: should rows (data examples) where the feature is a Numpy NaN be removed?
+        :param sigmaWidth: for how many multiples of sigma should the gaussian be plotted on each side of mu
 
     """
     colorArray =  ['red', 'blue', 'green', 'cyan', 'magenta', 'yellow', 'black', 'orange']
     fig, ax = plt.subplots()
     for classID in classList:
+
+
+        #data cleaning
         dataFilteredByClass = dataSet[dataSet[:, classColID] == classID]
         if removeNans:
             dataFilteredByClass = dataFilteredByClass[~np.isnan(dataFilteredByClass[:, featureColID])]
         dataToPlot = dataFilteredByClass[:, featureColID]
-        plotSingleClassOverview(data=dataToPlot, color=colorArray[classList.index(classID)], className=str(classNames[classID]))
-    legeend = plt.legend(shadow=True)
+
+        #gaussian fit
+        mu, sigma, alpha = fitGaussian(dataToPlot)
+
+        #plotting
+        color=colorArray[classList.index(classID)]
+        plt.plot(
+            [x for x in range(int(mu - sigmaWidth * sigma), int(mu + sigmaWidth * sigma))],
+            [gaussCurve(x, mu, sigma, alpha) for x in
+                range(int(mu - sigmaWidth * sigma), int(mu + sigmaWidth * sigma))],
+            color=color,
+            label=str(classNames[classID])
+        )
+        plt.hist(dataToPlot, len(set(dataToPlot)), color=color)
+
+    legend = plt.legend(shadow=True)
     plt.show()
 
-def plotSingleClassOverview(data, color, sigmaWidth=6, className=''):
-    """
-    plots the histograms of a 1D dataset and fits the histogram with a Gaussian
 
-    :param data: the 1D dataset
-    :param color: what color should the plot be
-    :param sigmaWidth: how many multiples of sigma
-    :param className: name of the class for the plot legend
+
+def fitGaussian(data):
+    """
+    fits a Gaussian curve (alpha * exp(-(0.5)(x-mu)^2/sigma^2)) through the given data using least-square optimization
+        (scipy.optimize.curve_fit)
+    :param data: 1D array to fit the 1D gaussian to
+    :return: the parameters of the fitted gaussian
     """
 
     stats = dict((i, data.tolist().count(i)) for i in set(data))
     guessMu, guessSigma = norm.fit(data)
     guessAlpha = len(data) / (len(stats.keys()) + 1.0)
     [mu, sigma, alpha], cov = opt.curve_fit(gaussCurve, stats.keys(), stats.values(), p0=[guessMu, guessSigma, guessAlpha])
-    plt.plot(
-        [x for x in range(int(mu - sigmaWidth * sigma), int(mu + sigmaWidth * sigma))],
-        [gaussCurve(x, mu, sigma, alpha) for x in
-            range(int(mu - sigmaWidth * sigma), int(mu + sigmaWidth * sigma))],
-        color=color,
-        label=className
-    )
-
-
-
-    print 'Mu: ' + str(mu) + ' vs ' + str(guessMu)
-    print 'Sigma: ' + str(sigma) + ' vs ' + str(guessSigma)
-    print 'Alpha: ' + str(alpha) + ' vs ' + str(guessAlpha)
-    plt.hist(data, len(stats), color=color)
+    return mu, sigma, alpha
 
 
 

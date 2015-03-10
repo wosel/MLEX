@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import matplotlib.colors as colors
+from ConfigParser import ConfigParser
 import numpy as np
 
 import scipy.optimize as opt
@@ -8,6 +8,17 @@ from scipy.stats import norm
 __author__ = 'Jakub Hajic'
 
 def gaussCurve(x, mu, sigma, alpha):
+    """
+    Calculates value at point x of a (scaled) gaussian curve
+    ATTN: the resulting curve is not necessarily a distribution, does not integrate to 1 - hence the scaling parameter alpha.
+
+    :param x: where to calculate the value
+    :param mu: mean of gaussian
+    :param sigma: std dev. of gaussian
+    :param alpha: scaling constant
+    :return:
+    """
+
     return alpha * np.exp((-0.5) * (x - mu) * (x - mu) / (sigma * sigma))
 
 
@@ -21,15 +32,13 @@ def plotFeatureValuesAsHistogram(dataSet, featureColID, classColID, classList=[]
         :param featureColID: which column is the desired feature in. Indexed from 0
         :param classColID: which column is the class designator in. Indexed from 0
         :param classList: list of classes to display the feature value histogram for (use values fouond in the dataset)
-        :param classNames: labels for the legend in the plot. Dictionary indexed by classList
+        :param classNames: labels for the legend in the plot. Python dict indexed by classList
         :param removeNans: should rows (data examples) where the feature is a Numpy NaN be removed?
         :param sigmaWidth: for how many multiples of sigma should the gaussian be plotted on each side of mu
 
     """
     colorArray =  ['red', 'blue', 'green', 'cyan', 'magenta', 'yellow', 'black', 'orange']
-    fig, ax = plt.subplots()
     for classID in classList:
-
 
         #data cleaning
         dataFilteredByClass = dataSet[dataSet[:, classColID] == classID]
@@ -73,4 +82,14 @@ def fitGaussian(data):
 
 
 dataPAMAP = np.loadtxt('subject101.dat')
-plotFeatureValuesAsHistogram(dataSet=dataPAMAP, featureColID=2, classColID=1, classList=[1, 3, 5], classNames = {1:'Lying', 3:'Standning', 5:'Running'}, removeNans=True)
+parser = ConfigParser()
+parser.readfp(open('config.ini'))
+
+
+plotFeatureValuesAsHistogram(dataSet=dataPAMAP,
+                             featureColID=parser.getint('plot specs', 'featurecol'),
+                             classColID=parser.getint('plot specs', 'classcol'),
+                             classList=[int(x) for x in parser.get('plot specs', 'classids').split(',')],
+                             classNames=dict(zip([int(x) for x in parser.get('plot specs', 'classids').split(',')],parser.get('plot specs', 'classnames').split(','))),
+                             removeNans=parser.getboolean('plot specs', 'removenans'),)
+

@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from ConfigParser import ConfigParser
 import numpy as np
+import sys
+import getopt
 
 import scipy.optimize as opt
 from scipy.stats import norm
@@ -81,15 +83,39 @@ def fitGaussian(data):
 
 
 
-dataPAMAP = np.loadtxt('subject101.dat')
-parser = ConfigParser()
-parser.readfp(open('config.ini'))
 
+def main():
 
-plotFeatureValuesAsHistogram(dataSet=dataPAMAP,
-                             featureColID=parser.getint('plot specs', 'featurecol'),
-                             classColID=parser.getint('plot specs', 'classcol'),
-                             classList=[int(x) for x in parser.get('plot specs', 'classids').split(',')],
-                             classNames=dict(zip([int(x) for x in parser.get('plot specs', 'classids').split(',')],parser.get('plot specs', 'classnames').split(','))),
-                             removeNans=parser.getboolean('plot specs', 'removenans'),)
+    fileName = ''
+    configFile = ''
 
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hf:c:', ['help', 'file=', 'configfile='])
+    except getopt.GetoptError:
+        print 'plotter.py -f <inputfile> -c <configfile>'
+        return 1
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            print 'plotter.py -f <inputfile> -c <configfile>'
+        elif opt in('-f', '--file'):
+            fileName = arg
+        elif opt in ('-c', '--configfile'):
+            configFile = arg
+    if (fileName == '' or configFile == ''):
+        print 'plotter.py -f <inputfile> -c <configfile>'
+        return 1
+
+    data = np.loadtxt(fileName)
+    parser = ConfigParser()
+    parser.readfp(open(configFile))
+
+    plotFeatureValuesAsHistogram(dataSet=data,
+                                 featureColID=parser.getint('plot specs', 'featurecol'),
+                                 classColID=parser.getint('plot specs', 'classcol'),
+                                 classList=[int(x) for x in parser.get('plot specs', 'classids').split(',')],
+                                 classNames=dict(zip([int(x) for x in parser.get('plot specs', 'classids').split(',')],parser.get('plot specs', 'classnames').split(','))),
+                                 removeNans=parser.getboolean('plot specs', 'removenans'))
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

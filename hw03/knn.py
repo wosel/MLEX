@@ -7,7 +7,8 @@ def loadTrainingSet(filename):
     fTrain = open(filename)
     data = []
     for line in fTrain:
-        features = line.rstrip().split(',')
+        featuresTmp = line.rstrip().split(',')
+        features = [x.strip() for x in featuresTmp]
         data.append(features)
     fTrain.close()
     return data
@@ -68,8 +69,8 @@ def runOnTestData(trainedData, testFilename, classCol, k):
     succ = 0
     fail = 0
     for line in fTest:
-        testSample = line.rstrip().split(',')
-
+        testSampleTmp = line.rstrip().split(',')
+        testSample = [x.strip() for x in testSampleTmp]
         distMaps = getDistMaps(testSample, trainedData, classCol=classCol)
         classif = getClassif(distMaps, classCol, k=k)
 
@@ -77,7 +78,7 @@ def runOnTestData(trainedData, testFilename, classCol, k):
         if classif == testSample[classCol]:
             succ += 1;
         else:
-            #print "error: {0} classified as {1}".format(testSample, classif)
+            print "error: {0} classified as {1}".format(testSample, classif)
             fail += 1
     return succ, fail
 

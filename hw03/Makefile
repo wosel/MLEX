@@ -5,10 +5,10 @@ URL_INCOME_TEST=http://archive.ics.uci.edu/ml/machine-learning-databases/adult/a
 all: artif_sep artif_noise income
 
 artif_sep: unzip_artif
-	python knn.py -r artificial_separable_train.csv -s artifical_separable_test.csv -k 4 -c 3
+	python knn.py -r artificial_separable_train.csv -s artificial_separable_test.csv -k 4 -c 3
 
 artif_noise: unzip_artif
-	python knn.py -r artificial_with_noise_train.csv -s artifical_with_noise_test.csv -k 4 -c 3
+	python knn.py -r artificial_with_noise_train.csv -s artificial_with_noise_test.csv -k 4 -c 3
 
 unzip_artif: download_artif
 	gunzip -c artificial_objects.tgz

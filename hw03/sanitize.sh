@@ -11,6 +11,7 @@ testLenTail=$((testLen-2))
 
 head -n $testLenHead adult.data > adult.test.tmp;
 tail -n $testLenTail adult.test.tmp > adult.test.sanitized;
+sed -i .backup 's/.//g' adult.test.sanitized;
 
-rm adult.test.tmp
+rm -f adult.test.tmp adult.test.sanitized.backup
 

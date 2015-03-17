@@ -11,17 +11,21 @@ artif_noise: unzip_artif
 	python knn.py -r artificial_with_noise_train.csv -s artificial_with_noise_test.csv -k 4 -c 3
 
 unzip_artif: download_artif
-    tar -zxvf artificial_objects.tgz
+	tar -zxvf artificial_objects.tgz
 
 download_artif:
-	wget $(URL_ARTIF)
+	wget --quiet $(URL_ARTIF)
 
-income: download_income
-	python knn.py -r adult.data -s adult.test -k 4 -c 14
+income: sanitize_income
+	python knn.py -r adult.data.sanitized -s adult.test.sanitized -k 4 -c 14
+
+sanitize_income: download_income
+	chmod u+x sanitize.sh
+	./sanitize.sh
 
 download_income:
-	wget $(URL_INCOME_TRAIN)
-	wget $(URL_INCOME_TEST)
+	wget --quiet $(URL_INCOME_TRAIN)
+	wget --quiet $(URL_INCOME_TEST)
 
 clean:
-	rm -f *.csv artificial_objects.tgz adult.data adult.test
+	rm -f *.csv artificial_objects.tgz adult.*

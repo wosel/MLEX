@@ -109,7 +109,7 @@ def runOnTestData(trainedData, testFilename, classCol, k, verbose=False, reportI
     counter = 0
 
     for line in fTest:
-        if verbose and divmod(counter, reportInterval) == 0:
+        if verbose and divmod(counter, reportInterval)[1] == 0:
             print "Finished {0} datapoints with {1} succesfully classified".format(counter, succ)
         testSampleTmp = line.rstrip().split(',')
         testSample = [x.strip() for x in testSampleTmp]
@@ -132,24 +132,28 @@ def main():
     trainFilename = ''
     testFilename = ''
     k = 1
-
+    classCol = -1
+    verbose = False
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hr:s:k:c:', ['help', 'trainFile=' 'testFile=', 'k=', 'classCol='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hvr:s:k:c:', ['help', 'verbose', 'trainFile=' 'testFile=', 'k=', 'classCol='])
     except getopt.GetoptError:
         print 'knn.py -r <trainingFile> -s <testingFile> -k <k> -c <classCol>'
         return 1
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             print 'knn.py -r <trainingFile> -s <testingFile> -k <k> -c <classCol>'
+            break
         elif opt in('-r', '--trainFile'):
             trainFilename = arg
+        elif opt in('-v', '--verbose'):
+            verbose = True
         elif opt in('-s', '--testFile'):
             testFilename = arg
         elif opt in ('-k', '--k'):
             k = int(arg)
         elif opt in ('-c', '--classCol'):
             classCol = int(arg)
-    if (trainFilename == '' or testFilename == ''):
+    if (trainFilename == '' or testFilename == '' or classCol == -1):
         print 'knn.py -r <trainingFile> -s <testingFile> -k <k> -c <classCol>'
         return 1
 
@@ -162,7 +166,7 @@ def main():
     print ''
 
     print "testing on " + testFilename + " with k set to " + str(k)
-    successCt, failCt = runOnTestData(trainedData=data, testFilename=testFilename, classCol=classCol, k=k, verbose=True)
+    successCt, failCt = runOnTestData(trainedData=data, testFilename=testFilename, classCol=classCol, k=k, verbose=verbose)
 
     print ''
     print "done: "

@@ -11,7 +11,7 @@ artif_noise: unzip_artif
 	python knn.py -r artificial_with_noise_train.csv -s artificial_with_noise_test.csv -k 4 -c 3
 
 unzip_artif: download_artif
-	gunzip -c artificial_objects.tgz
+    tar -zxvf artificial_objects.tgz
 
 download_artif:
 	wget $(URL_ARTIF)

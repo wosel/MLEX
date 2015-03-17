@@ -70,13 +70,13 @@ def main():
             print 'Points are generated thusly: every basic-interval along all sides of the square, we shift along the line by x ~ N(0, interval-variance) and perpendicular to the line by y ~ N(0, noise-variance), and place a point'
             return 1
         elif opt in ('-c', '--example-count'):
-            count = arg
+            count = int(arg)
         elif opt in ('-n', '--noise-variance'):
-            noiseVar = arg
+            noiseVar = float(arg)
         elif opt in ('-i', '--basic-interval'):
-            basicInterval = arg
+            basicInterval = float(arg)
         elif opt in ('-d', '--interval-variance'):
-            intervalVar = arg
+            intervalVar = float(arg)
 
     for i in range(count):
         pts = generateSquare(noiseVar=noiseVar, basicInterval=basicInterval, intervalVar=intervalVar)

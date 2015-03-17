@@ -4,4 +4,4 @@ BASIC_INTERVAL=0.01
 INTERVAL_VAR=0.005
 
 all:
-    python generator.py -c $(COUNT)  -n $(NOISE_VAR) -i $(BASIC_INTERVAL) -d $(INTERVAL_VAR)
+	python generator.py -c $(COUNT)  -n $(NOISE_VAR) -i $(BASIC_INTERVAL) -d $(INTERVAL_VAR)

@@ -78,7 +78,7 @@ def runOnTestData(trainedData, testFilename, classCol, k):
         if classif == testSample[classCol]:
             succ += 1;
         else:
-            print "error: {0} classified as {1}".format(testSample, classif)
+            #print "error: {0} classified as {1}".format(testSample, classif)
             fail += 1
     return succ, fail
 

@@ -13,7 +13,7 @@ artif_noise: unzip_artif
 unzip_artif: download_artif
 	gunzip -c artificial_objects.tgz
 
-download-artif:
+download_artif:
 	wget $(URL_ARTIF)
 
 income: download_income

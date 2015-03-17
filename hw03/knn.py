@@ -4,6 +4,12 @@ import sys
 import getopt
 
 def loadTrainingSet(filename):
+    """
+    Loads the training set
+
+    :param filename: the filename to load the training set from
+    :return: the loaded dataset as an arrray of values, row ~ data example, column ~ feature incl. class
+    """
     fTrain = open(filename)
     data = []
     for line in fTrain:
@@ -14,6 +20,14 @@ def loadTrainingSet(filename):
     return data
 
 def discreteMetric(arrayA, arrayB):
+    """
+    calculates the discrete metric between two arrays
+    d(x, y) = 0 iff x==y, = 1 otherwise
+
+    :param arrayA:
+    :param arrayB:
+    :return: the distance ~ the number of elements in the array which difffered
+    """
     if len(arrayA) != len(arrayB):
         print arrayA
         print arrayB
@@ -25,6 +39,13 @@ def discreteMetric(arrayA, arrayB):
     return dist
 
 def getDistMaps(testSample, data, classCol):
+    """
+
+    :param testSample: the sample from which we calculate the distance
+    :param data: the (training / model) data
+    :param classCol: (which column of the dataset is the class)
+    :return: the distMaps: distMaps[i] ~ list of datapoints with distance i from testSample
+    """
     distMaps = [[] for _ in range(len(testSample))]
     for sample in data:
         sampleFeatures = sample[:classCol]+sample[classCol+1:]
@@ -35,6 +56,14 @@ def getDistMaps(testSample, data, classCol):
 
 
 def getClassif(distMaps, classCol, k):
+    """
+    Predicts the class of a datapoint based on distMaps
+
+    :param distMaps: the distMaps from a single testSample (see getDistMaps)
+    :param classCol: what column of the data is the class in
+    :param k: the 'k' in k-nearest neighbors
+    :return: the predicted class
+    """
     currentNeighbours = 0
     votes = {}
     for dist in range(len(distMaps)):
@@ -64,11 +93,24 @@ def getClassif(distMaps, classCol, k):
     return classif
 
 
-def runOnTestData(trainedData, testFilename, classCol, k):
+def runOnTestData(trainedData, testFilename, classCol, k, verbose=False, reportInterval=100):
+    """
+    Runs the classification on a test dataset
+
+    :param trainedData: the training / model data
+    :param testFilename: the filename where the test data are
+    :param classCol: w
+    :param k: what column of the data is the class in
+    :return: number of succesfully classified datapoints, and number of unsuccesfully classified datapoints
+    """
     fTest = open(testFilename)
     succ = 0
     fail = 0
+    counter = 0
+
     for line in fTest:
+        if verbose and divmod(counter, reportInterval):
+            print "Finished {0} datapoints with {1} succesfully classified".format(counter, succ)
         testSampleTmp = line.rstrip().split(',')
         testSample = [x.strip() for x in testSampleTmp]
         distMaps = getDistMaps(testSample, trainedData, classCol=classCol)
@@ -78,8 +120,10 @@ def runOnTestData(trainedData, testFilename, classCol, k):
         if classif == testSample[classCol]:
             succ += 1;
         else:
-            #print "error: {0} classified as {1}".format(testSample, classif)
+            if verbose:
+                print "error: {0} classified as {1}".format(testSample, classif)
             fail += 1
+        counter+=1
     return succ, fail
 
 
@@ -118,7 +162,7 @@ def main():
     print ''
 
     print "testing on " + testFilename + " with k set to " + str(k)
-    successCt, failCt = runOnTestData(trainedData=data, testFilename=testFilename, classCol=classCol, k=k)
+    successCt, failCt = runOnTestData(trainedData=data, testFilename=testFilename, classCol=classCol, k=k, verbose=True)
 
     print ''
     print "done: "

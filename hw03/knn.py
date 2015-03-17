@@ -109,7 +109,7 @@ def runOnTestData(trainedData, testFilename, classCol, k, verbose=False, reportI
     counter = 0
 
     for line in fTest:
-        if verbose and divmod(counter, reportInterval):
+        if verbose and divmod(counter, reportInterval) == 0:
             print "Finished {0} datapoints with {1} succesfully classified".format(counter, succ)
         testSampleTmp = line.rstrip().split(',')
         testSample = [x.strip() for x in testSampleTmp]

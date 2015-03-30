@@ -17,14 +17,14 @@ names = ["Nearest Neighbors",
          "Decision Tree",
          "Random Forest",
          "AdaBoost",
-         "LDA"]
+         ]
 classifiers = [
     KNeighborsClassifier(3),
     SVC(gamma=2, C=1),
     DecisionTreeClassifier(max_depth=5),
     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
     AdaBoostClassifier(),
-    LDA()
+
     ]
 def creditData():
 

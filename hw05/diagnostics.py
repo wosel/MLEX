@@ -1,30 +1,15 @@
+import getopt
 import pandas as pd
 import numpy as np
 import sys
-
+import math
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 from sklearn.cross_validation import train_test_split
 
-
-names = ["Nearest Neighbors",
-#         "RBF SVM",
-#         "Decision Tree",
-#         "Random Forest",
-#         "AdaBoost",
-         ]
-classifiers = [
-    KNeighborsClassifier(3),
-#    SVC(gamma=2, C=1),
-#    DecisionTreeClassifier(max_depth=5),
-#    RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-#    AdaBoostClassifier(),
-]
 
 class dataSet:
     def __init__(self, trainData, trainClasses, testData, testClasses):
@@ -45,7 +30,7 @@ class dataSet:
 
 class dataLoader:
     def __init__(self):
-        pass
+        self.dataset = self.loadData()
 
 class creditData(dataLoader):
 
@@ -166,11 +151,17 @@ class incomeData(dataLoader):
 
 dataLoaders = [
     creditData(),
-#    shapeData(),
-#    AESOPData(),
-#    incomeData()
+    shapeData(),
+    AESOPData(),
+    incomeData()
 ]
 
+dataSetNames = [
+    "Credit ",
+    "Generated pointclouds",
+    "AESOP",
+    "Adult income"
+]
 
 def runClassifier(clf, trainData, trainClasses, testData, testClasses):
     clf.fit(trainData, trainClasses)
@@ -178,32 +169,99 @@ def runClassifier(clf, trainData, trainClasses, testData, testClasses):
     testScore = clf.score(testData, testClasses)
     return trainScore, testScore
 
+def getPlotDimensions(plotCount, screenW, screenH):
+    plotH = math.sqrt(screenH*plotCount/screenW)
+    plotW = (screenW/screenH) * plotH
+
+    floorH = int(math.floor(plotH))
+    floorW = int(math.floor(plotW))
+
+    if ((floorH+1) * floorW >= plotCount):
+        return floorW, floorH+1
+    elif (floorH * (floorW+1) >= plotCount):
+        return floorW+1, floorH
+    else:
+        return floorW+1, floorH+1
+
 
 def main():
 
+    screenWidth = 16.
+    screenHeight = 9.
+    numSteps = 50
+
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], 'hn:w:g:', ['help', 'num-steps', 'screen-width=', 'screen-height='])
+    except getopt.GetoptError:
+        print 'diagnostics.py [-n <numSteps>] [-w <screenWidth>] [-h <screenHeight>]'
+        return 1
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            print 'diagnostics.py [-n <numSteps>] [-w <screenWidth>] [-h <screenHeight>]'
+            break
+        elif opt in('-n', '--num-steps'):
+            numSteps = int(arg)
+        elif opt in('-w', '--screen-width'):
+            screenWidth = float(arg)
+        elif opt in('-g', '--screen-height'):
+            screenHeight = float(arg)
+
+
+    # prepare the plot dimensions (when not given, assumes screen ration 16:9, will work reasonably well elsewhere)
+    plotH, plotW = getPlotDimensions(len(dataLoaders), screenW=screenWidth, screenH=screenHeight)
+
+    # lower bound on training set size - some algorithms need >1 data point. 10 is safe
+    lowerBound = 10
+
+
+    dataID = 0
     for dataL in dataLoaders:
-        print dataL
 
-        dataset = dataL.loadData()
+        dataset = dataL.dataset
+        stepSize = (dataset.getTrainSize()-lowerBound) / numSteps
 
-        stepSize = dataset.getTrainSize() / 100
-        plt.axis([0,100,0,1])
-
+        # prepare the subplot
+        plt.subplot(plotH, plotW, dataID+1)
+        plt.axis([0,numSteps,0,1])
         plt.ion()
+        plt.title(dataSetNames[dataID])
+        redLine = mlines.Line2D([], [], color='red', label='Training acc.')
+        blueLine = mlines.Line2D([], [], color='blue', label='Testing acc.')
+        plt.legend(handles=[blueLine, redLine], loc=4, prop={'size': 12})
         plt.show()
-        testData, testClasses = dataset.getTest()
-        for (name, clf) in zip(names, classifiers):
-            print name
-            trainScoreTable = []
-            testScoreTable = []
-            for i in range(10, dataset.getTrainSize(), stepSize):
-                trainData, trainClasses = dataset.getTrain(i)
-                trainScore, testScore = runClassifier(clf, trainData, trainClasses, testData, testClasses)
-                trainScoreTable.append(trainScore)
-                testScoreTable.append(testScore)
-                plt.plot(trainScoreTable, 'r-', testScoreTable, 'b-')
-                plt.draw()
 
+        # load test data, prepare scoring tables
+        testData, testClasses = dataset.getTest()
+        trainScoreTable = []
+        testScoreTable = []
+
+        # we have chosen the Decision Tree Classifier. You may substitute any classifier of choice
+        clf = DecisionTreeClassifier(max_depth=5)
+
+
+        for i in range(lowerBound, dataset.getTrainSize(), stepSize):
+            # get the training data of the given size
+            trainData, trainClasses = dataset.getTrain(i)
+
+            # run the classifier, obtain score on training and testing data
+            trainScore, testScore = runClassifier(clf, trainData, trainClasses, testData, testClasses)
+
+
+            # append to result tables
+            trainScoreTable.append(trainScore)
+            testScoreTable.append(testScore)
+
+            # plot results so far
+            plt.plot(trainScoreTable, 'r-', label='Training acc.')
+            plt.plot(testScoreTable, 'b-', label='Testing acc.')
+            plt.draw()
+            plt.pause(0.001)
+
+        dataID += 1
+
+    # Wait for user to close pyplot figure beofre exiting
+    plt.show(block=True)
 
 
 

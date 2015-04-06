@@ -174,7 +174,9 @@ def getPlotDimensions(plotCount, screenW, screenH):
     floorH = int(math.floor(plotH))
     floorW = int(math.floor(plotW))
 
-    if ((floorH+1) * floorW >= plotCount):
+    if (floorH * floorW >= plotCount):
+        return floorW, floorH
+    elif ((floorH+1) * floorW >= plotCount):
         return floorW, floorH+1
     elif (floorH * (floorW+1) >= plotCount):
         return floorW+1, floorH
@@ -207,7 +209,7 @@ def main():
 
 
     # prepare the plot dimensions (when not given, assumes screen ration 16:9, will work reasonably well elsewhere)
-    plotH, plotW = getPlotDimensions(len(dataLoaders), screenW=screenWidth, screenH=screenHeight)
+    plotW, plotH = getPlotDimensions(len(dataLoaders), screenW=screenWidth, screenH=screenHeight)
 
     # lower bound on training set size - some algorithms need >1 data point. 10 is safe
     lowerBound = 10
@@ -220,6 +222,7 @@ def main():
         stepSize = (dataset.getTrainSize()-lowerBound) / numSteps
 
         # prepare the subplot
+
         plt.subplot(plotH, plotW, dataID+1)
         plt.axis([0,numSteps,0,1])
         plt.ion()

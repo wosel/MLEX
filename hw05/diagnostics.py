@@ -152,15 +152,13 @@ class incomeData(dataLoader):
 dataLoaders = [
     creditData(),
     shapeData(),
-    AESOPData(),
-    incomeData()
+    AESOPData()
 ]
 
 dataSetNames = [
     "Credit ",
     "Generated pointclouds",
     "AESOP",
-    "Adult income"
 ]
 
 def runClassifier(clf, trainData, trainClasses, testData, testClasses):

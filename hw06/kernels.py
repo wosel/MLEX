@@ -55,8 +55,9 @@ def main():
 
     run10fold = False
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'hrdf:s:l:p:c:v:', ['help', 'run10fold' 'header' 'filename=', 'separator=', 'classCol=', 'processCount=', 'crossValFolds=', 'verboseLevel='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hdf:s:l:p:c:v:r', ['help', 'header' 'filename=', 'separator=', 'classCol=', 'processCount=', 'crossValFolds=', 'verboseLevel=', 'run10fold'])
     except getopt.GetoptError:
+        print "getopt error"
         print 'kernels.py -f <filename>  -s <separator> -d <header> -l <classCol> -p <processCount> -c <crossValFolds> -v <verboseLevel>'
         return 1
     for opt, arg in opts:
@@ -82,6 +83,7 @@ def main():
 
 
     if (filename == '' or classCol == -1):
+        print "missing filename or classCol"
         print 'kernels.py -f <fileName> -s <separator> -d <header> -l <classCol> -p <processCount> -c <crossValFolds> -v <verboseLevel>'
         return 1
     fullDF = pd.DataFrame
@@ -91,7 +93,6 @@ def main():
         fullDF = pd.read_csv(filename, sep=separator, header=None)
     fullDF = fullDF.dropna()
     allData = fullDF.as_matrix()
-    allData = allData[1:10, :]
     allClasses = allData[:, classCol]
     allFeatures = np.delete(arr=allData, obj=classCol, axis=1)
     scaler = StandardScaler()
@@ -135,7 +136,7 @@ def main():
         )
         clf = runGridSearch(paramsRBF, allFeatures, allClasses, numJobs=processCount, verboseLevel=verboseLevel, crossValFolds=10)
         for p in clf.grid_scores_:
-            print "RBF kernel with gamma {0} and C {1} had mean {2} and stdev {3}".format(p[0]['gamma'], p[0]['C'], p[1], np.std(p[2]))
+            print "RBF kernel with C {0} and gamma {1} had mean {2} and stdev {3}".format(p[0]['C'], p[0]['gamma'], p[1], np.std(p[2]))
         plotBase = preparePlotBase(paramsRBF, clf.grid_scores_)
 
         plt.pcolor(plotBase, cmap=plt.cm.Blues)

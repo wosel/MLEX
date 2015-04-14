@@ -4,7 +4,10 @@ TARGET=subject101.dat
 CONFIG=config.ini
 
 all: unzip
-	python plotter.py -f $(TARGET) --separator ' ' --classCol 1  --processCount 6 --crossValFolds 3 --verboseLevel 1
+	python kernels.py -f $(TARGET) --separator ' ' --classCol 1  --processCount 6 --crossValFolds 3 --verboseLevel 1
+
+optional: unzip
+	python kernels.py -f $(TARGET) --separator ' ' --classCol 1  --processCount 6 --crossValFolds 3 --verboseLevel 1 --run10fold
 
 unzip: download
 	gunzip -c $(DLTARGET) > $(TARGET)

@@ -1,13 +1,13 @@
 import sys
 
-print(__doc__)
-
 import time
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import kMeans
+
+import pandas as pd
 
 from sklearn import cluster, datasets, metrics
 from sklearn.neighbors import kneighbors_graph
@@ -16,15 +16,18 @@ from sklearn.preprocessing import StandardScaler
 #############  Following code taken from example @ scikit-learn.org ############
 def bench_k_means(estimator, name, labels):
 
-    print('{0:20}\t{1:.6f}\t{2:.6f}\t{3:.6f}\t{4:.6f}\t{5:.6f}'.format
-            (name,
-             metrics.homogeneity_score(labels, estimator.labels_),
-             metrics.completeness_score(labels, estimator.labels_),
-             metrics.v_measure_score(labels, estimator.labels_),
-             metrics.adjusted_rand_score(labels, estimator.labels_),
-             metrics.adjusted_mutual_info_score(labels,  estimator.labels_)
-             )
-        )
+    scores = {
+        "homogeneity": metrics.homogeneity_score(labels, estimator.labels_),
+        "completeness": metrics.completeness_score(labels, estimator.labels_),
+        "v_measure": metrics.v_measure_score(labels, estimator.labels_),
+        "ARI": metrics.adjusted_rand_score(labels, estimator.labels_),
+        "AMI": metrics.adjusted_mutual_info_score(labels,  estimator.labels_)
+
+
+
+    }
+    return scores
+
 #############  End of code taken from example @ scikit-learn.org ###############
 
 class dataSet:
@@ -137,8 +140,7 @@ def runComparisonOnDataset(dataLoader):
     colors = np.array([x for x in 'bgrcmykbgrcmykbgrcmykbgrcmyk'])
     colors = np.hstack([colors] * 20)
 
-
-    print('Name                   homogeneity completeness v_measrure     ARI         AMI')
+    scores = dict()
     for name, algorithm in zip(clustering_names, clustering_algorithms):
         # predict cluster memberships
         t0 = time.time()
@@ -150,7 +152,7 @@ def runComparisonOnDataset(dataLoader):
             y_pred = algorithm.predict(X)
 
         if hasattr(algorithm, 'labels_'):
-            bench_k_means(algorithm, name, y)
+            scores[name] = bench_k_means(algorithm, name, y)
 
         # plot
         plt.subplot(4, len(clustering_algorithms), plot_num)
@@ -171,6 +173,9 @@ def runComparisonOnDataset(dataLoader):
                  horizontalalignment='right')
         plot_num += 1
 
+
+    scoredf = pd.DataFrame(scores)
+    print scoredf.transpose()
     plt.show()
 
 #############  End of code taken from example @ scikit-learn.org ###############

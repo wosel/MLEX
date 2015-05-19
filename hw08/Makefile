@@ -1,2 +1,2 @@
-all: pamap_easy_train.txt
-	python -W hw08.py
+all: pamap_easy.train.txt
+	python -W ignore hw08.py
